@@ -80,9 +80,9 @@ Upgrade to v7 by @Julek23
       * tokenomics updated: For my understanding in the current contract the tokenomics are not set properly. If a transaction is taxed, 1% is used as reflection. 
         Thats ok. The rest (9%) are send to the contract. When the sell bot sells tokens bnb is generated and split up as this:
           * 12.861% liquidity
-          * 9,639% marketing
-          * 3,213% team
-          * 64,287% bnbpool  
+          * 9.639% marketing
+          * 3.213% team
+          * 64.287% bnbpool  
           
          Our tokenomics instead says 10% Reflection, 10% Marketing, 20% Liquidity, 60% BNBpool. I changed the contract so we fullfill the tokenomics.
       * Currently the sell bot is only triggered if someone sells on pancakeswap. In the upgraded contract the sell bot is triggered on every sell regardless the DEX.
