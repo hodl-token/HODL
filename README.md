@@ -79,7 +79,7 @@ Upgrade to v7 by @Julek23
       * Redeem rewards: Calculation of bnbreward and reinvest tokens only if necessary. Free gas fee removed (should lower the gas fee to claim)
       * tokenomics updated: For my understanding in the current contract the tokenomics are not set properly. If a transaction is taxed, 1% is used as reflection. 
         Thats ok. The rest (9%) are send to the contract. When the sell bot sells tokens bnb is generated and split up as this:
-          * 12.861% liquidy
+          * 12.861% liquidity
           * 9,639% marketing
           * 3,213% team
           * 64,287% bnbpool  
