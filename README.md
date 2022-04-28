@@ -92,5 +92,17 @@ Upgrade to v7 by @Julek23
         I implemented this so we can set up a bot which has full control of the triggerwallet. This bot needs to check if a swap and liquify is possible (enough tokens available plus pool below rewardhardcap) and could trigger the sell bot continously for example every hour.
         This will ensure that the bnbpool is filled up properly.
         
+* 3.7.1 - Upgrade to v7.1
+    * Functions deleted:
+        * Activate Contract
+        * Initialize
+
+    * Changed functions:
+        * changerevinvesttax: Now it changes all layers at one transaction
+        * changeclaimtax: Now it changes all layers at one transaction
+
+    * Upgrade details:
+        * Reinvest taxes removed completly
+        * Reinvest procedure changed: Tokens are bought and directly send to the user. No use of the reinvestwallet 
         
         
