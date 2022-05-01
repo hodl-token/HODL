@@ -1002,88 +1002,6 @@ contract HODL is Context, IBEP20, Ownable, ReentrancyGuard {
 
     constructor() {}
 
-    function initialize(address payable routerAddress, address _owner)
-        public
-        initializer
-    {
-        Ownable.initOwner(_owner);
-        totalClaimedBNB = 0;
-        totalreinvested = 0;
-        totalgasfeesdistributed = 0;
-        deadAddress = 0x000000000000000000000000000000000000dEaD;
-        MAX = ~uint256(0);
-        _tTotal = 1000000000 * 10**6 * 10**9;
-        _rTotal = (MAX - (MAX % _tTotal));
-        _name = "HODL";
-        _symbol = "HODL";
-        _decimals = 9;
-        // Innovation for protocol by HODL Team
-        rewardCycleBlock = 1 days;
-        easyRewardCycleBlock = 1 days;
-        threshHoldTopUpRate = 25;
-        _maxTxAmount = _tTotal;
-        disruptiveCoverageFee = 1 ether;
-        swapAndLiquifyEnabled = true;
-        _inSwapAndLiquify = false;
-        disruptiveTransferEnabledFrom = 0;
-        disableEasyRewardFrom = 0;
-        reflectionFeesDisabled = false;
-        _taxFee = 10;
-        _previousTaxFee = _taxFee;
-
-        bnbClaimTax = LayerTax(10, 10, 10, 10, 10, 20);
-        reinvestTax = LayerTax(10, 10, 10, 10, 10, 20);
-
-        tokenomics = Tokenomics(60, 20, 10, 10, 0);
-
-        selltax = 100;
-        buytax = 100;
-        transfertax = 100;
-
-        updateTokenomics();
-
-        reservewallet = 0x1d5230Da5f00182edb944314E615B8E352F83E83;
-        marketingwallet = 0x0a199377F5489A285c70f03326b6D4BF769c10d3;
-        reinvestwallet = 0xDBfd28762ffBB645FD1D2790f6fFeC4dbBD17007;
-        triggerwallet = 0x0000000000000000000000000000000000000000;
-
-        _liquidityFee = 20;
-        _previousLiquidityFee = _liquidityFee;
-
-        minTokenNumberToSell = _tTotal.mul(1).div(10000).div(10);
-        minTokenNumberUpperlimit = _tTotal.mul(2).div(100).div(10);
-
-        rewardHardcap = 20 ether;
-
-        _rOwned[_msgSender()] = _rTotal;
-
-        IPancakeRouter02 _pancakeRouter = IPancakeRouter02(routerAddress);
-
-        pancakePair = IPancakeFactory(_pancakeRouter.factory()).createPair(
-            address(this),
-            _pancakeRouter.WETH()
-        );
-
-        // set the rest of the contract variables
-        pancakeRouter = _pancakeRouter;
-
-        daySeconds = 86400;
-
-        //exclude owner and this contract from fee
-        _isExcludedFromFee[owner()] = true;
-        _isExcludedFromFee[address(this)] = true;
-
-        // exclude from max tx
-        _isExcludedFromMaxTx[owner()] = true;
-        _isExcludedFromMaxTx[address(this)] = true;
-        _isExcludedFromMaxTx[
-            address(0x000000000000000000000000000000000000dEaD)
-        ] = true;
-        _isExcludedFromMaxTx[address(0)] = true;
-
-        emit Transfer(address(0), _msgSender(), _tTotal);
-    }
-
     mapping(address => bool) isBlacklisted;
 
     function name() public view returns (string memory) {
@@ -1412,14 +1330,9 @@ contract HODL is Context, IBEP20, Ownable, ReentrancyGuard {
     }
 
     function checkTaxAndLiquidityFees() private view returns (bool) {
-        if (
+        return
             block.timestamp >
-            disruptiveTransferEnabledFrom.add(daySeconds.mul(2))
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+            disruptiveTransferEnabledFrom.add(daySeconds.mul(2));
     }
 
     function removeAllFee() private {
@@ -1683,18 +1596,16 @@ contract HODL is Context, IBEP20, Ownable, ReentrancyGuard {
         returns (uint256)
     {
         uint256 totalsupply = uint256(_tTotal)
-            .sub(balanceOf(address(0)))
-            .sub(balanceOf(0x000000000000000000000000000000000000dEaD))
-            .sub(balanceOf(address(pancakePair))); // exclude burned wallet
-        // exclude liquidity wallet
+        .sub(balanceOf(address(0)))
+        .sub(balanceOf(0x000000000000000000000000000000000000dEaD)).sub( // exclude burned wallet
+                balanceOf(address(pancakePair))
+            ); // exclude liquidity wallet
 
         return
             Utils.calculateBNBReward(
-                //  _tTotal,
                 balanceOf(address(ofAddress)),
                 address(this).balance,
                 totalsupply,
-                //  ofAddress,
                 rewardHardcap
             );
     }
@@ -1709,7 +1620,6 @@ contract HODL is Context, IBEP20, Ownable, ReentrancyGuard {
             nextAvailableClaimDate[msg.sender] <= block.timestamp,
             "Error: next available not reached"
         );
-        require(!isBlacklisted[msg.sender], "Sender is backlisted");
         require(
             balanceOf(msg.sender) >= 0,
             "Error: must own HODL to claim reward"
@@ -1730,69 +1640,6 @@ contract HODL is Context, IBEP20, Ownable, ReentrancyGuard {
 
         // BNB REINVEST
         if (perc < 100) {
-            // BNB REINVEST tax
-            if (rewardreinvest < 0.1 ether) {
-                uint256 rewardfee = rewardreinvest.mul(reinvestTax.layer1).div(
-                    100
-                );
-                (bool success, ) = address(reservewallet).call{
-                    value: rewardfee
-                }("");
-                require(success, " Error: Cannot send reward");
-
-                rewardreinvest = rewardreinvest.sub(rewardfee);
-            } else if (rewardreinvest < 0.25 ether) {
-                uint256 rewardfee = rewardreinvest.mul(reinvestTax.layer2).div(
-                    100
-                );
-                (bool success, ) = address(reservewallet).call{
-                    value: rewardfee
-                }("");
-                require(success, " Error: Cannot send reward");
-
-                rewardreinvest = rewardreinvest.sub(rewardfee);
-            } else if (rewardreinvest < 0.5 ether) {
-                uint256 rewardfee = rewardreinvest.mul(reinvestTax.layer3).div(
-                    100
-                );
-                (bool success, ) = address(reservewallet).call{
-                    value: rewardfee
-                }("");
-                require(success, " Error: Cannot send reward");
-
-                rewardreinvest = rewardreinvest.sub(rewardfee);
-            } else if (rewardreinvest < 0.75 ether) {
-                uint256 rewardfee = rewardreinvest.mul(reinvestTax.layer4).div(
-                    100
-                );
-                (bool success, ) = address(reservewallet).call{
-                    value: rewardfee
-                }("");
-                require(success, " Error: Cannot send reward");
-
-                rewardreinvest = rewardreinvest.sub(rewardfee);
-            } else if (rewardreinvest < 1 ether) {
-                uint256 rewardfee = rewardreinvest.mul(reinvestTax.layer5).div(
-                    100
-                );
-                (bool success, ) = address(reservewallet).call{
-                    value: rewardfee
-                }("");
-                require(success, " Error: Cannot send reward");
-
-                rewardreinvest = rewardreinvest.sub(rewardfee);
-            } else {
-                uint256 rewardfee = rewardreinvest.mul(reinvestTax.layer6).div(
-                    100
-                );
-                (bool success, ) = address(reservewallet).call{
-                    value: rewardfee
-                }("");
-                require(success, " Error: Cannot send reward");
-
-                rewardreinvest = rewardreinvest.sub(rewardfee);
-            }
-
             // Re-InvestTokens
             uint256 expectedtoken = Utils.getAmountsout(
                 rewardreinvest,
@@ -1801,79 +1648,51 @@ contract HODL is Context, IBEP20, Ownable, ReentrancyGuard {
 
             // update reinvest rewards
             userreinvested[msg.sender] += expectedtoken;
-            totalreinvested = totalreinvested + expectedtoken;
+            totalreinvested += expectedtoken;
 
-            // Transfer token equivalent to bnb to user account
-            removeAllFee();
-            _transferStandard(address(this), msg.sender, expectedtoken);
-            restoreAllFee();
-
-            // buy tokens from pancake and send to re-invest wallet
-            Utils.swapETHForTokens(
-                address(pancakeRouter),
-                reinvestwallet,
-                rewardreinvest
-            );
+            // buy tokens
+            if (_isExcludedFromFee[msg.sender]) {
+                Utils.swapETHForTokens(
+                    address(pancakeRouter),
+                    msg.sender,
+                    rewardreinvest
+                );
+            } else {
+                _isExcludedFromFee[msg.sender] = true;
+                Utils.swapETHForTokens(
+                    address(pancakeRouter),
+                    msg.sender,
+                    rewardreinvest
+                );
+                _isExcludedFromFee[msg.sender] = false;
+            }
         }
 
         // BNB CLAIM
         if (rewardBNB > 0) {
+            uint256 rewardfee;
+            bool success;
             // deduct tax
             if (rewardBNB < 0.1 ether) {
-                uint256 rewardfee = rewardBNB.mul(bnbClaimTax.layer1).div(100);
-                (bool success, ) = address(reservewallet).call{
-                    value: rewardfee
-                }("");
-                require(success, " Error: Cannot send reward");
-
-                rewardBNB = rewardBNB.sub(rewardfee);
+                rewardfee = rewardBNB.mul(bnbClaimTax.layer1).div(100);
             } else if (rewardBNB < 0.25 ether) {
-                uint256 rewardfee = rewardBNB.mul(bnbClaimTax.layer2).div(100);
-                (bool success, ) = address(reservewallet).call{
-                    value: rewardfee
-                }("");
-                require(success, " Error: Cannot send reward");
-
-                rewardBNB = rewardBNB.sub(rewardfee);
+                rewardfee = rewardBNB.mul(bnbClaimTax.layer2).div(100);
             } else if (rewardBNB < 0.5 ether) {
-                uint256 rewardfee = rewardBNB.mul(bnbClaimTax.layer3).div(100);
-                (bool success, ) = address(reservewallet).call{
-                    value: rewardfee
-                }("");
-                require(success, " Error: Cannot send reward");
-
-                rewardBNB = rewardBNB.sub(rewardfee);
+                rewardfee = rewardBNB.mul(bnbClaimTax.layer3).div(100);
             } else if (rewardBNB < 0.75 ether) {
-                uint256 rewardfee = rewardBNB.mul(bnbClaimTax.layer4).div(100);
-                (bool success, ) = address(reservewallet).call{
-                    value: rewardfee
-                }("");
-                require(success, " Error: Cannot send reward");
-
-                rewardBNB = rewardBNB.sub(rewardfee);
+                rewardfee = rewardBNB.mul(bnbClaimTax.layer4).div(100);
             } else if (rewardBNB < 1 ether) {
-                uint256 rewardfee = rewardBNB.mul(bnbClaimTax.layer5).div(100);
-                (bool success, ) = address(reservewallet).call{
-                    value: rewardfee
-                }("");
-                require(success, " Error: Cannot send reward");
-
-                rewardBNB = rewardBNB.sub(rewardfee);
+                rewardfee = rewardBNB.mul(bnbClaimTax.layer5).div(100);
             } else {
-                uint256 rewardfee = rewardBNB.mul(bnbClaimTax.layer6).div(100);
-                (bool success, ) = address(reservewallet).call{
-                    value: rewardfee
-                }("");
-                require(success, " Error: Cannot send reward");
-
-                rewardBNB = rewardBNB.sub(rewardfee);
+                rewardfee = rewardBNB.mul(bnbClaimTax.layer6).div(100);
             }
+            rewardBNB -= rewardfee;
+            (success, ) = address(reservewallet).call{value: rewardfee}("");
+            require(success, " Error: Cannot send reward");
 
             // send bnb to user
-
-            // BNB CLAIM
-            (bool sent, ) = address(msg.sender).call{value: rewardBNB}("");
-            require(sent, "Error: Cannot withdraw reward");
+            (success, ) = address(msg.sender).call{value: rewardBNB}("");
+            require(success, "Error: Cannot withdraw reward");
 
             // update claimed rewards
             userClaimedBNB[msg.sender] += rewardBNB;
@@ -2019,7 +1838,8 @@ contract HODL is Context, IBEP20, Ownable, ReentrancyGuard {
 
     function triggerSwapAndLiquify() public lockTheSwap {
         require(
-            _msgSender() == address(triggerwallet) && swapAndLiquifyEnabled,
+            ((_msgSender() == address(triggerwallet)) ||
+                (_msgSender() == owner())) && swapAndLiquifyEnabled,
             "Wrong caller or swapAndLiquify not enabled"
         );
 
@@ -2069,43 +1889,6 @@ contract HODL is Context, IBEP20, Ownable, ReentrancyGuard {
             );
             emit SwapAndLiquify(liquidityToken, deltaBalance, liquidityToken);
         }
-    }
-
-    /*
-    function activateTestNet() public onlyOwner {
-         // reward claim
-         disableEasyRewardFrom = block.timestamp;
-         rewardCycleBlock = 1 minutes;
-         easyRewardCycleBlock = 1 minutes;
-
-         // protocol
-         disruptiveCoverageFee = 1 ether;
-         disruptiveTransferEnabledFrom = block.timestamp;
-         setMaxTxPercent(10000);                   // 100 means 1%   and 1 means 0.01%
-         setSwapAndLiquifyEnabled(true);
-
-         // approve contract
-         _approve(address(this), address(pancakeRouter), 2 ** 256 - 1);
-          IWBNB(payable(address(0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd))).approve(address(pancakeRouter),2 ** 256 - 1);
-    }
-    */
-
-    function activateContract() public onlyOwner {
-        // reward claim
-        disableEasyRewardFrom = block.timestamp + 1 weeks;
-        rewardCycleBlock = 1 days;
-        easyRewardCycleBlock = 1 days;
-
-        // protocol
-        disruptiveCoverageFee = 1 ether;
-        disruptiveTransferEnabledFrom = block.timestamp;
-        setMaxTxPercent(10000);
-        setSwapAndLiquifyEnabled(true);
-
-        // approve contract
-        _approve(address(this), address(pancakeRouter), 2**256 - 1);
-        IWBNB(payable(address(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c)))
-            .approve(address(pancakeRouter), 2**256 - 1);
     }
 
     function changerewardCycleBlock(uint256 newcycle) public onlyOwner {
@@ -2188,9 +1971,7 @@ contract HODL is Context, IBEP20, Ownable, ReentrancyGuard {
         uint256 reserve
     ) public onlyOwner {
         require(
-            bnbReward.add(
-                liquidity.add(marketing.add(reflection.add(reserve)))
-            ) == 100,
+            bnbReward + liquidity + marketing + reflection + reserve == 100,
             "Have to be 100 in total"
         );
         tokenomics = Tokenomics(
@@ -2203,56 +1984,40 @@ contract HODL is Context, IBEP20, Ownable, ReentrancyGuard {
         updateTokenomics();
     }
 
-    function changebnbclaimtax(uint8 layer, uint256 _newfee) public onlyOwner {
-        require(
-            layer == 1 ||
-                layer == 2 ||
-                layer == 3 ||
-                layer == 4 ||
-                layer == 5 ||
-                layer == 6,
-            "Select Appropriate Layer"
+    function changebnbclaimtax(
+        uint256 _layer1,
+        uint256 _layer2,
+        uint256 _layer3,
+        uint256 _layer4,
+        uint256 _layer5,
+        uint256 _layer6
+    ) public onlyOwner {
+        bnbClaimTax = LayerTax(
+            _layer1,
+            _layer2,
+            _layer3,
+            _layer4,
+            _layer5,
+            _layer6
         );
-
-        if (layer == 1) {
-            bnbClaimTax.layer1 = _newfee;
-        } else if (layer == 2) {
-            bnbClaimTax.layer2 = _newfee;
-        } else if (layer == 3) {
-            bnbClaimTax.layer3 = _newfee;
-        } else if (layer == 4) {
-            bnbClaimTax.layer4 = _newfee;
-        } else if (layer == 5) {
-            bnbClaimTax.layer5 = _newfee;
-        } else if (layer == 6) {
-            bnbClaimTax.layer6 = _newfee;
-        }
     }
 
-    function changereinvesttax(uint8 layer, uint256 _newfee) public onlyOwner {
-        require(
-            layer == 1 ||
-                layer == 2 ||
-                layer == 3 ||
-                layer == 4 ||
-                layer == 5 ||
-                layer == 6,
-            "Select Appropriate Layer"
+    function changereinvesttax(
+        uint256 _layer1,
+        uint256 _layer2,
+        uint256 _layer3,
+        uint256 _layer4,
+        uint256 _layer5,
+        uint256 _layer6
+    ) public onlyOwner {
+        reinvestTax = LayerTax(
+            _layer1,
+            _layer2,
+            _layer3,
+            _layer4,
+            _layer5,
+            _layer6
         );
-
-        if (layer == 1) {
-            reinvestTax.layer1 = _newfee;
-        } else if (layer == 2) {
-            reinvestTax.layer2 = _newfee;
-        } else if (layer == 3) {
-            reinvestTax.layer3 = _newfee;
-        } else if (layer == 4) {
-            reinvestTax.layer4 = _newfee;
-        } else if (layer == 5) {
-            reinvestTax.layer5 = _newfee;
-        } else if (layer == 6) {
-            reinvestTax.layer6 = _newfee;
-        }
     }
 
     function changeminTokenNumberToSell(uint256 _newvalue) public onlyOwner {
@@ -2292,18 +2057,14 @@ contract HODL is Context, IBEP20, Ownable, ReentrancyGuard {
         pairAddresses[_pairAddress] = _enable;
     }
 
-    function initializeUpgradedContract(address _triggerWallet)
-        public
-        onlyOwner
-    {
-        bnbClaimTax = LayerTax(10, 10, 10, 10, 10, 20);
-        reinvestTax = LayerTax(10, 10, 10, 10, 10, 20);
+    function initializeUpgradedContract() public onlyOwner {
+        bnbClaimTax = LayerTax(0, 0, 0, 0, 0, 0);
+        reinvestTax = LayerTax(0, 0, 0, 0, 0, 0);
         tokenomics = Tokenomics(60, 20, 10, 10, 0);
         selltax = 100;
-        buytax = 100;
+        buytax = 50;
         transfertax = 100;
         updateTokenomics();
-        triggerwallet = _triggerWallet;
         //init pairAddresses
         pairAddresses[pancakePair] = true;
         pairAddresses[0xa3cF95FdA825399Bb71C6C26969266fcEB79e48B] = true; //BabySwap
