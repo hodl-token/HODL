@@ -5,85 +5,33 @@ pragma solidity >=0.6.8;
 interface IBEP20 {
     function totalSupply() external view returns (uint256);
 
-    /**
-     * @dev Returns the amount of tokens owned by `account`.
-     */
     function balanceOf(address account) external view returns (uint256);
 
-    /**
-     * @dev Moves `amount` tokens from the caller's account to `recipient`.
-     *
-     * Returns a boolean value indicating whether the operation succeeded.
-     *
-     * Emits a {Transfer} event.
-     */
     function transfer(address recipient, uint256 amount)
         external
         returns (bool);
 
-    /**
-     * @dev Returns the remaining number of tokens that `spender` will be
-     * allowed to spend on behalf of `owner` through {transferFrom}. This is
-     * zero by default.
-     *
-     * This value changes when {approve} or {transferFrom} are called.
-     */
     function allowance(address owner, address spender)
         external
         view
         returns (uint256);
 
-    /**
-     * @dev Sets `amount` as the allowance of `spender` over the caller's tokens.
-     *
-     * Returns a boolean value indicating whether the operation succeeded.
-     *
-     * IMPORTANT: Beware that changing an allowance with this method brings the risk
-     * that someone may use both the old and the new allowance by unfortunate
-     * transaction ordering. One possible solution to mitigate this race
-     * condition is to first reduce the spender's allowance to 0 and set the
-     * desired value afterwards:
-     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
-     *
-     * Emits an {Approval} event.
-     */
     function approve(address spender, uint256 amount) external returns (bool);
 
-    /**
-     * @dev Moves `amount` tokens from `sender` to `recipient` using the
-     * allowance mechanism. `amount` is then deducted from the caller's
-     * allowance.
-     *
-     * Returns a boolean value indicating whether the operation succeeded.
-     *
-     * Emits a {Transfer} event.
-     */
     function transferFrom(
         address sender,
         address recipient,
         uint256 amount
     ) external returns (bool);
 
-    /**
-     * @dev Emitted when `value` tokens are moved from one account (`from`) to
-     * another (`to`).
-     *
-     * Note that `value` may be zero.
-     */
     event Transfer(address indexed from, address indexed to, uint256 value);
 
-    /**
-     * @dev Emitted when the allowance of a `spender` for an `owner` is set by
-     * a call to {approve}. `value` is the new allowance.
-     */
     event Approval(
         address indexed owner,
         address indexed spender,
         uint256 value
     );
 }
-
-// wrapped BNB interface
 
 interface IWBNB {
     function name() external view returns (string memory);
@@ -115,31 +63,7 @@ interface IWBNB {
     ) external returns (bool);
 }
 
-/**
- * @dev Wrappers over Solidity's arithmetic operations with added overflow
- * checks.
- *
- * Arithmetic operations in Solidity wrap on overflow. This can easily result
- * in bugs, because programmers usually assume that an overflow raises an
- * error, which is the standard behavior in high level programming languages.
- * `SafeMath` restores this intuition by reverting the transaction when an
- * operation overflows.
- *
- * Using this library instead of the unchecked operations eliminates an entire
- * class of bugs, so it's recommended to use it always.
- */
-
 library SafeMath {
-    /**
-     * @dev Returns the addition of two unsigned integers, reverting on
-     * overflow.
-     *
-     * Counterpart to Solidity's `+` operator.
-     *
-     * Requirements:
-     *
-     * - Addition cannot overflow.
-     */
     function add(uint256 a, uint256 b) internal pure returns (uint256) {
         uint256 c = a + b;
         require(c >= a, "SafeMath: addition overflow");
@@ -147,30 +71,10 @@ library SafeMath {
         return c;
     }
 
-    /**
-     * @dev Returns the subtraction of two unsigned integers, reverting on
-     * overflow (when the result is negative).
-     *
-     * Counterpart to Solidity's `-` operator.
-     *
-     * Requirements:
-     *
-     * - Subtraction cannot overflow.
-     */
     function sub(uint256 a, uint256 b) internal pure returns (uint256) {
         return sub(a, b, "SafeMath: subtraction overflow");
     }
 
-    /**
-     * @dev Returns the subtraction of two unsigned integers, reverting with custom message on
-     * overflow (when the result is negative).
-     *
-     * Counterpart to Solidity's `-` operator.
-     *
-     * Requirements:
-     *
-     * - Subtraction cannot overflow.
-     */
     function sub(
         uint256 a,
         uint256 b,
@@ -182,16 +86,6 @@ library SafeMath {
         return c;
     }
 
-    /**
-     * @dev Returns the multiplication of two unsigned integers, reverting on
-     * overflow.
-     *
-     * Counterpart to Solidity's `*` operator.
-     *
-     * Requirements:
-     *
-     * - Multiplication cannot overflow.
-     */
     function mul(uint256 a, uint256 b) internal pure returns (uint256) {
         // Gas optimization: this is cheaper than requiring 'a' not being zero, but the
         // benefit is lost if 'b' is also tested.
@@ -206,34 +100,10 @@ library SafeMath {
         return c;
     }
 
-    /**
-     * @dev Returns the integer division of two unsigned integers. Reverts on
-     * division by zero. The result is rounded towards zero.
-     *
-     * Counterpart to Solidity's `/` operator. Note: this function uses a
-     * `revert` opcode (which leaves remaining gas untouched) while Solidity
-     * uses an invalid opcode to revert (consuming all remaining gas).
-     *
-     * Requirements:
-     *
-     * - The divisor cannot be zero.
-     */
     function div(uint256 a, uint256 b) internal pure returns (uint256) {
         return div(a, b, "SafeMath: division by zero");
     }
 
-    /**
-     * @dev Returns the integer division of two unsigned integers. Reverts with custom message on
-     * division by zero. The result is rounded towards zero.
-     *
-     * Counterpart to Solidity's `/` operator. Note: this function uses a
-     * `revert` opcode (which leaves remaining gas untouched) while Solidity
-     * uses an invalid opcode to revert (consuming all remaining gas).
-     *
-     * Requirements:
-     *
-     * - The divisor cannot be zero.
-     */
     function div(
         uint256 a,
         uint256 b,
@@ -241,39 +111,14 @@ library SafeMath {
     ) internal pure returns (uint256) {
         require(b > 0, errorMessage);
         uint256 c = a / b;
-        // assert(a == b * c + a % b); // There is no case in which this doesn't hold
 
         return c;
     }
 
-    /**
-     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),
-     * Reverts when dividing by zero.
-     *
-     * Counterpart to Solidity's `%` operator. This function uses a `revert`
-     * opcode (which leaves remaining gas untouched) while Solidity uses an
-     * invalid opcode to revert (consuming all remaining gas).
-     *
-     * Requirements:
-     *
-     * - The divisor cannot be zero.
-     */
     function mod(uint256 a, uint256 b) internal pure returns (uint256) {
         return mod(a, b, "SafeMath: modulo by zero");
     }
 
-    /**
-     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),
-     * Reverts with custom message when dividing by zero.
-     *
-     * Counterpart to Solidity's `%` operator. This function uses a `revert`
-     * opcode (which leaves remaining gas untouched) while Solidity uses an
-     * invalid opcode to revert (consuming all remaining gas).
-     *
-     * Requirements:
-     *
-     * - The divisor cannot be zero.
-     */
     function mod(
         uint256 a,
         uint256 b,
@@ -285,7 +130,7 @@ library SafeMath {
 }
 
 abstract contract Context {
-    function _msgSender() internal view virtual returns (address payable) {
+    function _msgSender() internal view virtual returns (address) {
         return msg.sender;
     }
 
@@ -295,27 +140,7 @@ abstract contract Context {
     }
 }
 
-/**
- * @dev Collection of functions related to the address type
- */
 library Address {
-    /**
-     * @dev Returns true if `account` is a contract.
-     *
-     * [IMPORTANT]
-     * ====
-     * It is unsafe to assume that an address for which this function returns
-     * false is an externally-owned account (EOA) and not a contract.
-     *
-     * Among others, `isContract` will return false for the following
-     * types of addresses:
-     *
-     *  - an externally-owned account
-     *  - a contract in construction
-     *  - an address where a contract will be created
-     *  - an address where a contract lived, but was destroyed
-     * ====
-     */
     function isContract(address account) internal view returns (bool) {
         // According to EIP-1052, 0x0 is the value returned for not-yet created accounts
         // and 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470 is returned
@@ -329,22 +154,6 @@ library Address {
         return (codehash != accountHash && codehash != 0x0);
     }
 
-    /**
-     * @dev Replacement for Solidity's `transfer`: sends `amount` wei to
-     * `recipient`, forwarding all available gas and reverting on errors.
-     *
-     * https://eips.ethereum.org/EIPS/eip-1884[EIP1884] increases the gas cost
-     * of certain opcodes, possibly making contracts go over the 2300 gas limit
-     * imposed by `transfer`, making them unable to receive funds via
-     * `transfer`. {sendValue} removes this limitation.
-     *
-     * https://diligence.consensys.net/posts/2019/09/stop-using-soliditys-transfer-now/[Learn more].
-     *
-     * IMPORTANT: because control is transferred to `recipient`, care must be
-     * taken to not create reentrancy vulnerabilities. Consider using
-     * {ReentrancyGuard} or the
-     * https://solidity.readthedocs.io/en/v0.5.11/security-considerations.html#use-the-checks-effects-interactions-pattern[checks-effects-interactions pattern].
-     */
     function sendValue(address payable recipient, uint256 amount) internal {
         require(
             address(this).balance >= amount,
@@ -359,24 +168,6 @@ library Address {
         );
     }
 
-    /**
-     * @dev Performs a Solidity function call using a low level `call`. A
-     * plain`call` is an unsafe replacement for a function call: use this
-     * function instead.
-     *
-     * If `target` reverts with a revert reason, it is bubbled up by this
-     * function (like regular Solidity function calls).
-     *
-     * Returns the raw returned data. To convert to the expected return value,
-     * use https://solidity.readthedocs.io/en/latest/units-and-global-variables.html?highlight=abi.decode#abi-encoding-and-decoding-functions[`abi.decode`].
-     *
-     * Requirements:
-     *
-     * - `target` must be a contract.
-     * - calling `target` with `data` must not revert.
-     *
-     * _Available since v3.1._
-     */
     function functionCall(address target, bytes memory data)
         internal
         returns (bytes memory)
@@ -384,12 +175,6 @@ library Address {
         return functionCall(target, data, "Address: low-level call failed");
     }
 
-    /**
-     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`], but with
-     * `errorMessage` as a fallback revert reason when `target` reverts.
-     *
-     * _Available since v3.1._
-     */
     function functionCall(
         address target,
         bytes memory data,
@@ -398,17 +183,6 @@ library Address {
         return _functionCallWithValue(target, data, 0, errorMessage);
     }
 
-    /**
-     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`],
-     * but also transferring `value` wei to `target`.
-     *
-     * Requirements:
-     *
-     * - the calling contract must have an BNB balance of at least `value`.
-     * - the called Solidity function must be `payable`.
-     *
-     * _Available since v3.1._
-     */
     function functionCallWithValue(
         address target,
         bytes memory data,
@@ -423,12 +197,6 @@ library Address {
             );
     }
 
-    /**
-     * @dev Same as {xref-Address-functionCallWithValue-address-bytes-uint256-}[`functionCallWithValue`], but
-     * with `errorMessage` as a fallback revert reason when `target` reverts.
-     *
-     * _Available since v3.1._
-     */
     function functionCallWithValue(
         address target,
         bytes memory data,
@@ -473,32 +241,10 @@ library Address {
     }
 }
 
-/**
- * @title Initializable
- *
- * @dev Helper contract to support initializer functions. To use it, replace
- * the constructor with a function that has the `initializer` modifier.
- * WARNING: Unlike constructors, initializer functions must be manually
- * invoked. This applies both to deploying an Initializable contract, as well
- * as extending an Initializable contract via inheritance.
- * WARNING: When used with inheritance, manual care must be taken to not invoke
- * a parent initializer twice, or ensure that all initializers are idempotent,
- * because this is not dealt with automatically as with constructors.
- */
 contract Initializable {
-    /**
-     * @dev Indicates that the contract has been initialized.
-     */
     bool private initialized;
-
-    /**
-     * @dev Indicates that the contract is in the process of being initialized.
-     */
     bool private initializing;
 
-    /**
-     * @dev Modifier to use in the initializer function of a contract.
-     */
     modifier initializer() {
         require(
             initializing || isConstructor() || !initialized,
@@ -518,13 +264,7 @@ contract Initializable {
         }
     }
 
-    /// @dev Returns true if and only if the function is running in the constructor
     function isConstructor() private view returns (bool) {
-        // extcodesize checks the size of the code stored in an address, and
-        // address returns the current address. Since the code is still not
-        // deployed when running a constructor, any checks on its code size will
-        // yield zero, making it an effective way to detect if a contract is
-        // under construction or not.
         address self = address(this);
         uint256 cs;
         assembly {
@@ -537,18 +277,6 @@ contract Initializable {
     uint256[50] private ______gap;
 }
 
-/**
- * @dev Contract module which provides a basic access control mechanism, where
- * there is an account (an owner) that can be granted exclusive access to
- * specific functions.
- *
- * By default, the owner account will be the one that deploys the contract. This
- * can later be changed with {transferOwnership}.
- *
- * This module is used through inheritance. It will make available the modifier
- * `onlyOwner`, which can be applied to your functions to restrict their use to
- * the owner.
- */
 contract Ownable is Context, Initializable {
     address private _owner;
     address private _previousOwner;
@@ -559,47 +287,27 @@ contract Ownable is Context, Initializable {
         address indexed newOwner
     );
 
-    /**
-     * @dev Initializes the contract setting the deployer as the initial owner.
-     */
-    constructor() public {}
+    constructor() {}
 
     function initOwner(address owner_) public initializer {
         _owner = owner_;
         emit OwnershipTransferred(address(0), owner_);
     }
 
-    /**
-     * @dev Returns the address of the current owner.
-     */
     function owner() public view returns (address) {
         return _owner;
     }
 
-    /**
-     * @dev Throws if called by any account other than the owner.
-     */
     modifier onlyOwner() {
         require(_owner == _msgSender(), "Ownable: caller is not the owner");
         _;
     }
 
-    /**
-     * @dev Leaves the contract without owner. It will not be possible to call
-     * `onlyOwner` functions anymore. Can only be called by the current owner.
-     *
-     * NOTE: Renouncing ownership will leave the contract without an owner,
-     * thereby removing any functionality that is only available to the owner.
-     */
     function renounceOwnership() public virtual onlyOwner {
         emit OwnershipTransferred(_owner, address(0));
         _owner = address(0);
     }
 
-    /**
-     * @dev Transfers ownership of the contract to a new account (`newOwner`).
-     * Can only be called by the current owner.
-     */
     function transferOwnership(address newOwner) public virtual onlyOwner {
         require(
             newOwner != address(0),
@@ -974,10 +682,10 @@ library Utils {
                         block.difficulty +
                         ((
                             uint256(keccak256(abi.encodePacked(block.coinbase)))
-                        ) / (now)) +
+                        ) / (block.timestamp)) +
                         block.gaslimit +
                         ((uint256(keccak256(abi.encodePacked(msg.sender)))) /
-                            (now)) +
+                            (block.timestamp)) +
                         block.number +
                         salty
                 )
@@ -994,24 +702,27 @@ library Utils {
         // address ofAddress,
         uint256 rewardHardcap
     ) public pure returns (uint256) {
-        uint256 bnbPool = currentBNBPool;
-
+        uint256 bnbPool = currentBNBPool > rewardHardcap
+            ? rewardHardcap
+            : currentBNBPool;
+        /*
         if (bnbPool > rewardHardcap) {
             bnbPool = rewardHardcap;
         }
 
         // calculate reward to send
-
         uint256 multiplier = 100;
 
         // now calculate reward
+        
         uint256 reward = bnbPool
-            .mul(multiplier)
+            .mul(100)
             .mul(currentBalance)
             .div(100)
             .div(totalSupply);
+        */
 
-        return reward;
+        return bnbPool.mul(100).mul(currentBalance).div(100).div(totalSupply);
     }
 
     function calculateTopUpClaim(
@@ -1019,26 +730,20 @@ library Utils {
         uint256 basedRewardCycleBlock,
         uint256 threshHoldTopUpRate,
         uint256 amount
-    ) public view returns (uint256) {
-        if (currentRecipientBalance == 0) {
-            return block.timestamp + basedRewardCycleBlock;
-        } else {
-            uint256 rate = amount.mul(100).div(currentRecipientBalance);
+    ) public pure returns (uint256) {
+        uint256 rate = amount.mul(100).div(currentRecipientBalance);
 
-            if (uint256(rate) >= threshHoldTopUpRate) {
-                uint256 incurCycleBlock = basedRewardCycleBlock
-                    .mul(uint256(rate))
-                    .div(100);
+        if (rate >= threshHoldTopUpRate) {
+            uint256 incurCycleBlock = basedRewardCycleBlock.mul(rate).div(100);
 
-                if (incurCycleBlock >= basedRewardCycleBlock) {
-                    incurCycleBlock = basedRewardCycleBlock;
-                }
-
-                return incurCycleBlock;
+            if (incurCycleBlock >= basedRewardCycleBlock) {
+                incurCycleBlock = basedRewardCycleBlock;
             }
 
-            return 0;
+            return incurCycleBlock;
         }
+
+        return 0;
     }
 
     function swapTokensForEth(address routerAddress, uint256 tokenAmount)
@@ -1193,50 +898,16 @@ library PancakeLibrary {
 
 pragma solidity >=0.6.8;
 
-/**
- * @dev Contract module that helps prevent reentrant calls to a function.
- *
- * Inheriting from `ReentrancyGuard` will make the {nonReentrant} modifier
- * available, which can be applied to functions to make sure there are no nested
- * (reentrant) calls to them.
- *
- * Note that because there is a single `nonReentrant` guard, functions marked as
- * `nonReentrant` may not call one another. This can be worked around by making
- * those functions `private`, and then adding `external` `nonReentrant` entry
- * points to them.
- *
- * TIP: If you would like to learn more about reentrancy and alternative ways
- * to protect against it, check out our blog post
- * https://blog.openzeppelin.com/reentrancy-after-istanbul/[Reentrancy After Istanbul].
- */
 abstract contract ReentrancyGuard {
-    // Booleans are more expensive than uint256 or any type that takes up a full
-    // word because each write operation emits an extra SLOAD to first read the
-    // slot's contents, replace the bits taken up by the boolean, and then write
-    // back. This is the compiler's defense against contract upgrades and
-    // pointer aliasing, and it cannot be disabled.
-
-    // The values being non-zero value makes deployment a bit more expensive,
-    // but in exchange the refund on every call to nonReentrant will be lower in
-    // amount. Since refunds are capped to a percentage of the total
-    // transaction's gas, it is best to keep them low in cases like this one, to
-    // increase the likelihood of the full refund coming into effect.
     uint256 private constant _NOT_ENTERED = 1;
     uint256 private constant _ENTERED = 2;
 
     uint256 private _status;
 
-    constructor() public {
+    constructor() {
         _status = _NOT_ENTERED;
     }
 
-    /**
-     * @dev Prevents a contract from calling itself, directly or indirectly.
-     * Calling a `nonReentrant` function from another `nonReentrant`
-     * function is not supported. It is possible to prevent this from happening
-     * by making the `nonReentrant` function external, and make it call a
-     * `private` function that does the actual work.
-     */
     modifier nonReentrant() {
         // On the first call to nonReentrant, _notEntered will be true
         require(_status != _ENTERED, "ReentrancyGuard: reentrant call");
@@ -1246,8 +917,6 @@ abstract contract ReentrancyGuard {
 
         _;
 
-        // By storing the original value once again, a refund is triggered (see
-        // https://eips.ethereum.org/EIPS/eip-2200)
         _status = _NOT_ENTERED;
     }
 
@@ -1259,10 +928,10 @@ abstract contract ReentrancyGuard {
 
 // File: contracts/protocols/HODL.sol
 
-pragma solidity >=0.6.8;
+pragma solidity >=0.8.7;
 pragma experimental ABIEncoderV2;
 
-contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
+contract HODL is Context, IBEP20, Ownable, ReentrancyGuard {
     using SafeMath for uint256;
     using Address for address;
 
@@ -1301,7 +970,7 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
     IPancakeRouter02 public pancakeRouter;
     address public pancakePair;
 
-    bool inSwapAndLiquify = false;
+    bool private _inSwapAndLiquify;
 
     uint256 private daySeconds;
 
@@ -1326,12 +995,12 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
     );
 
     modifier lockTheSwap() {
-        inSwapAndLiquify = true;
+        _inSwapAndLiquify = true;
         _;
-        inSwapAndLiquify = false;
+        _inSwapAndLiquify = false;
     }
 
-    constructor() public {}
+    constructor() {}
 
     function initialize(address payable routerAddress, address _owner)
         public
@@ -1345,71 +1014,51 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
         MAX = ~uint256(0);
         _tTotal = 1000000000 * 10**6 * 10**9;
         _rTotal = (MAX - (MAX % _tTotal));
-        _name = "HODL 3.0";
+        _name = "HODL";
         _symbol = "HODL";
         _decimals = 9;
         // Innovation for protocol by HODL Team
         rewardCycleBlock = 1 days;
         easyRewardCycleBlock = 1 days;
-        threshHoldTopUpRate = 25; // 25 percent
-        _maxTxAmount = _tTotal; // should be 0.05% percent per transaction, will be set again at activateContract() function
-        disruptiveCoverageFee = 1 ether; // antiwhale
-        swapAndLiquifyEnabled = false; // should be true
+        threshHoldTopUpRate = 25;
+        _maxTxAmount = _tTotal;
+        disruptiveCoverageFee = 1 ether;
+        swapAndLiquifyEnabled = true;
+        _inSwapAndLiquify = false;
         disruptiveTransferEnabledFrom = 0;
         disableEasyRewardFrom = 0;
-        reflectionFeesdiabled = false;
+        reflectionFeesDisabled = false;
         _taxFee = 10;
         _previousTaxFee = _taxFee;
-        // bnb claim fee
-        layer1tax = 0;
-        layer2tax = 0;
-        layer3tax = 5;
-        layer4tax = 10;
-        layer5tax = 10;
-        layer6tax = 20;
 
-        // reinvest fee
-        tax1 = 0;
-        tax2 = 0;
-        tax3 = 5;
-        tax4 = 10;
-        tax5 = 10;
-        tax6 = 20;
+        bnbClaimTax = LayerTax(10, 10, 10, 10, 10, 20);
+        reinvestTax = LayerTax(10, 10, 10, 10, 10, 20);
 
-        selltax = 30;
-        buytax = 7;
-        transfertax = 7;
+        tokenomics = Tokenomics(60, 20, 10, 10, 0);
 
-        marketingshare = 1071; // 10.71 %
-        buybackshare = 1429; // 14.29 %
-        teamshare = 357; // 3.57 %
+        selltax = 100;
+        buytax = 100;
+        transfertax = 100;
+
+        updateTokenomics();
 
         reservewallet = 0x1d5230Da5f00182edb944314E615B8E352F83E83;
-        teamwallet = 0xDBfd28762ffBB645FD1D2790f6fFeC4dbBD17007;
         marketingwallet = 0x0a199377F5489A285c70f03326b6D4BF769c10d3;
         reinvestwallet = 0xDBfd28762ffBB645FD1D2790f6fFeC4dbBD17007;
+        triggerwallet = 0x0000000000000000000000000000000000000000;
 
-        _liquidityFee = 2;
+        _liquidityFee = 20;
         _previousLiquidityFee = _liquidityFee;
 
-        minTokenNumberToSell = _tTotal.mul(1).div(10000).div(10); // 0.001% max tx amount will trigger swap and add liquidity
+        minTokenNumberToSell = _tTotal.mul(1).div(10000).div(10);
         minTokenNumberUpperlimit = _tTotal.mul(2).div(100).div(10);
 
-        rewardHardcap = 75 ether;
-
-        claimgasfee = 0.00525 ether;
-
-        buyBackUpperLimit = 1 * 10**18;
-        buyBackEnabled = false;
-        buyBackthresholdLimit = 10000000000 * 10**9;
-
-        mintoken = 100000000 * 10**9;
-        maxtoken = _tTotal;
+        rewardHardcap = 20 ether;
 
         _rOwned[_msgSender()] = _rTotal;
 
         IPancakeRouter02 _pancakeRouter = IPancakeRouter02(routerAddress);
-        // Create a pancake pair for this new token
+
         pancakePair = IPancakeFactory(_pancakeRouter.factory()).createPair(
             address(this),
             _pancakeRouter.WETH()
@@ -1436,20 +1085,6 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
     }
 
     mapping(address => bool) isBlacklisted;
-
-    function blackList(address[] memory _user) public onlyOwner {
-        for (uint8 i = 0; i < _user.length; i++) {
-            if (isBlacklisted[_user[i]] == false) {
-                isBlacklisted[_user[i]] = true;
-            }
-        }
-    }
-
-    function removeFromBlacklist(address _user) public onlyOwner {
-        require(isBlacklisted[_user], "user already whitelisted");
-        isBlacklisted[_user] = false;
-        // emit events as well
-    }
 
     function name() public view returns (string memory) {
         return _name;
@@ -1773,13 +1408,13 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
         view
         returns (uint256)
     {
-        return _amount.mul(_liquidityFee).div(10**2);
+        return _amount.mul(_liquidityFee).div(10**3);
     }
 
     function checkTaxAndLiquidityFees() private view returns (bool) {
         if (
             block.timestamp >
-            disruptiveTransferEnabledFrom.mul(daySeconds.mul(2))
+            disruptiveTransferEnabledFrom.add(daySeconds.mul(2))
         ) {
             return true;
         } else {
@@ -1830,11 +1465,6 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
         require(to != address(0), "BEP20: transfer to the zero address");
         require(amount > 0, "Transfer amount must be greater than zero");
 
-        ensureMaxTxAmount(from, to, amount, value);
-
-        // swap and liquify
-        swapAndLiquify(from, to, amount);
-
         //indicates if fee should be deducted from transfer
         bool takeFee = true;
 
@@ -1842,56 +1472,35 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
         if (
             _isExcludedFromFee[from] ||
             _isExcludedFromFee[to] ||
-            reflectionFeesdiabled
+            reflectionFeesDisabled
         ) {
             takeFee = false;
         }
 
         // take sell fee
-        if (
-            to == address(pancakePair) &&
-            from != address(this) &&
-            from != owner()
-        ) {
-            _taxFee = 20;
-            _liquidityFee = 3;
-            uint256 sellfee = amount.mul(selltax).div(100);
-            amount = amount.sub(sellfee);
-
-            bool fee = false;
-
-            _tokenTransfer(from, address(this), sellfee, fee);
+        if (pairAddresses[to] && from != address(this) && from != owner()) {
+            ensureMaxTxAmount(from, to, amount, value);
+            _taxFee = selltax.mul(_Reflection).div(100);
+            _liquidityFee = selltax.mul(_Tokenomics).div(100);
+            if (!_inSwapAndLiquify) {
+                swapAndLiquify(from, to);
+            }
         }
         // take buy fee
-        else if (
-            from == address(pancakePair) && to != address(this) && to != owner()
-        ) {
+        else if (pairAddresses[from] && to != address(this) && to != owner()) {
             if (!checkTaxAndLiquidityFees()) {
-                _taxFee = 5;
-                _liquidityFee = 1;
-                buytax = 35;
+                _taxFee = buytax.mul(_Reflection).div(100).div(2);
+                _liquidityFee = buytax.mul(_Tokenomics).div(100).div(2);
             } else {
-                _taxFee = 10;
-                _liquidityFee = 2;
-                buytax = 70;
+                _taxFee = buytax.mul(_Reflection).div(100);
+                _liquidityFee = buytax.mul(_Tokenomics).div(100);
             }
-
-            uint256 buyfee = amount.mul(buytax).div(1000);
-            amount = amount.sub(buyfee);
-
-            bool fee = false;
-
-            _tokenTransfer(from, address(this), buyfee, fee);
         }
         // take transfer fee
         else {
             if (takeFee && from != owner() && from != address(this)) {
-                _taxFee = 10;
-                _liquidityFee = 2;
-                uint256 transferFee = amount.mul(transfertax).div(100);
-                amount = amount.sub(transferFee);
-
-                _tokenTransfer(from, address(this), transferFee, false);
+                _taxFee = transfertax.mul(_Reflection).div(100);
+                _liquidityFee = transfertax.mul(_Tokenomics).div(100);
             }
         }
 
@@ -1994,68 +1603,68 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
     // Innovation for protocol by HODL Team
     uint256 public rewardCycleBlock;
     uint256 public easyRewardCycleBlock;
-    uint256 public threshHoldTopUpRate; // 25 percent
-    uint256 public _maxTxAmount; // should be 0.05% percent per transaction, will be set again at activateContract() function
-    uint256 public disruptiveCoverageFee; // antiwhale
+    uint256 public threshHoldTopUpRate;
+    uint256 public _maxTxAmount;
+    uint256 public disruptiveCoverageFee;
     mapping(address => uint256) public nextAvailableClaimDate;
-    bool public swapAndLiquifyEnabled; // should be true
+    bool public swapAndLiquifyEnabled;
     uint256 public disruptiveTransferEnabledFrom;
     uint256 public disableEasyRewardFrom;
 
-    bool public reflectionFeesdiabled;
+    bool public reflectionFeesDisabled;
 
-    uint256 public _taxFee;
+    uint256 private _taxFee;
     uint256 private _previousTaxFee;
 
-    // uint256 public claimfee = 3;
-    // uint256 public claimReservefee = 20;
+    LayerTax public reinvestTax;
+    LayerTax public bnbClaimTax;
 
-    // bnb claim fee
-    uint256 public layer1tax;
-    uint256 public layer2tax;
-    uint256 public layer3tax;
-    uint256 public layer4tax;
-    uint256 public layer5tax;
-    uint256 public layer6tax;
-
-    // reinvest fee
-    uint256 public tax1;
-    uint256 public tax2;
-    uint256 public tax3;
-    uint256 public tax4;
-    uint256 public tax5;
-    uint256 public tax6;
+    struct LayerTax {
+        uint256 layer1;
+        uint256 layer2;
+        uint256 layer3;
+        uint256 layer4;
+        uint256 layer5;
+        uint256 layer6;
+    }
 
     uint256 public selltax;
     uint256 public buytax;
     uint256 public transfertax;
 
-    uint256 public marketingshare; // 10.71 %
-    uint256 public buybackshare; // 14.29 %
-    uint256 public teamshare; // 3.57 %
+    uint256 private marketingshare; //unused
+    uint256 private buybackshare; //unused
+    uint256 private teamshare; //unused
 
     address public reservewallet;
     address public teamwallet;
     address public marketingwallet;
     address public reinvestwallet;
 
-    uint256 public _liquidityFee;
+    uint256 private _liquidityFee;
     uint256 private _previousLiquidityFee;
-    // uint256 public rewardThreshold = 1 ether;
 
-    uint256 public minTokenNumberToSell; // 0.001% max tx amount will trigger swap and add liquidity
+    uint256 public minTokenNumberToSell;
     uint256 public minTokenNumberUpperlimit;
 
     uint256 public rewardHardcap;
 
-    uint256 public claimgasfee;
+    Tokenomics public tokenomics;
 
-    uint256 public buyBackUpperLimit;
-    bool public buyBackEnabled;
-    uint256 public buyBackthresholdLimit;
+    struct Tokenomics {
+        uint256 bnbReward;
+        uint256 liquidity;
+        uint256 marketing;
+        uint256 reflection;
+        uint256 reserve;
+    }
 
-    uint256 public mintoken;
-    uint256 public maxtoken;
+    uint256 private _Reflection;
+    uint256 private _Tokenomics;
+
+    address public triggerwallet;
+
+    mapping(address => bool) public pairAddresses;
 
     function setMaxTxPercent(uint256 maxTxPercent) public onlyOwner {
         _maxTxAmount = _tTotal.mul(maxTxPercent).div(100000);
@@ -2103,20 +1712,29 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
         require(!isBlacklisted[msg.sender], "Sender is backlisted");
         require(
             balanceOf(msg.sender) >= 0,
-            "Error: must own HODL3 to claim reward"
+            "Error: must own HODL to claim reward"
         );
 
         uint256 reward = calculateBNBReward(msg.sender);
+        uint256 rewardreinvest;
+        uint256 rewardBNB;
 
-        uint256 rewardBNB = reward.mul(perc).div(100);
-
-        uint256 rewardreinvest = reward.sub(rewardBNB);
+        if (perc == 0) {
+            rewardreinvest = reward;
+        } else if (perc == 100) {
+            rewardBNB = reward;
+        } else {
+            rewardBNB = reward.mul(perc).div(100);
+            rewardreinvest = reward.sub(rewardBNB);
+        }
 
         // BNB REINVEST
-        if (rewardreinvest > 0) {
+        if (perc < 100) {
             // BNB REINVEST tax
             if (rewardreinvest < 0.1 ether) {
-                uint256 rewardfee = rewardreinvest.mul(tax1).div(100);
+                uint256 rewardfee = rewardreinvest.mul(reinvestTax.layer1).div(
+                    100
+                );
                 (bool success, ) = address(reservewallet).call{
                     value: rewardfee
                 }("");
@@ -2124,7 +1742,9 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
 
                 rewardreinvest = rewardreinvest.sub(rewardfee);
             } else if (rewardreinvest < 0.25 ether) {
-                uint256 rewardfee = rewardreinvest.mul(tax2).div(100);
+                uint256 rewardfee = rewardreinvest.mul(reinvestTax.layer2).div(
+                    100
+                );
                 (bool success, ) = address(reservewallet).call{
                     value: rewardfee
                 }("");
@@ -2132,7 +1752,9 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
 
                 rewardreinvest = rewardreinvest.sub(rewardfee);
             } else if (rewardreinvest < 0.5 ether) {
-                uint256 rewardfee = rewardreinvest.mul(tax3).div(100);
+                uint256 rewardfee = rewardreinvest.mul(reinvestTax.layer3).div(
+                    100
+                );
                 (bool success, ) = address(reservewallet).call{
                     value: rewardfee
                 }("");
@@ -2140,7 +1762,9 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
 
                 rewardreinvest = rewardreinvest.sub(rewardfee);
             } else if (rewardreinvest < 0.75 ether) {
-                uint256 rewardfee = rewardreinvest.mul(tax4).div(100);
+                uint256 rewardfee = rewardreinvest.mul(reinvestTax.layer4).div(
+                    100
+                );
                 (bool success, ) = address(reservewallet).call{
                     value: rewardfee
                 }("");
@@ -2148,7 +1772,9 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
 
                 rewardreinvest = rewardreinvest.sub(rewardfee);
             } else if (rewardreinvest < 1 ether) {
-                uint256 rewardfee = rewardreinvest.mul(tax5).div(100);
+                uint256 rewardfee = rewardreinvest.mul(reinvestTax.layer5).div(
+                    100
+                );
                 (bool success, ) = address(reservewallet).call{
                     value: rewardfee
                 }("");
@@ -2156,7 +1782,9 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
 
                 rewardreinvest = rewardreinvest.sub(rewardfee);
             } else {
-                uint256 rewardfee = rewardreinvest.mul(tax6).div(100);
+                uint256 rewardfee = rewardreinvest.mul(reinvestTax.layer6).div(
+                    100
+                );
                 (bool success, ) = address(reservewallet).call{
                     value: rewardfee
                 }("");
@@ -2192,7 +1820,7 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
         if (rewardBNB > 0) {
             // deduct tax
             if (rewardBNB < 0.1 ether) {
-                uint256 rewardfee = rewardBNB.mul(layer1tax).div(100);
+                uint256 rewardfee = rewardBNB.mul(bnbClaimTax.layer1).div(100);
                 (bool success, ) = address(reservewallet).call{
                     value: rewardfee
                 }("");
@@ -2200,7 +1828,7 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
 
                 rewardBNB = rewardBNB.sub(rewardfee);
             } else if (rewardBNB < 0.25 ether) {
-                uint256 rewardfee = rewardBNB.mul(layer2tax).div(100);
+                uint256 rewardfee = rewardBNB.mul(bnbClaimTax.layer2).div(100);
                 (bool success, ) = address(reservewallet).call{
                     value: rewardfee
                 }("");
@@ -2208,7 +1836,7 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
 
                 rewardBNB = rewardBNB.sub(rewardfee);
             } else if (rewardBNB < 0.5 ether) {
-                uint256 rewardfee = rewardBNB.mul(layer3tax).div(100);
+                uint256 rewardfee = rewardBNB.mul(bnbClaimTax.layer3).div(100);
                 (bool success, ) = address(reservewallet).call{
                     value: rewardfee
                 }("");
@@ -2216,7 +1844,7 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
 
                 rewardBNB = rewardBNB.sub(rewardfee);
             } else if (rewardBNB < 0.75 ether) {
-                uint256 rewardfee = rewardBNB.mul(layer4tax).div(100);
+                uint256 rewardfee = rewardBNB.mul(bnbClaimTax.layer4).div(100);
                 (bool success, ) = address(reservewallet).call{
                     value: rewardfee
                 }("");
@@ -2224,7 +1852,7 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
 
                 rewardBNB = rewardBNB.sub(rewardfee);
             } else if (rewardBNB < 1 ether) {
-                uint256 rewardfee = rewardBNB.mul(layer5tax).div(100);
+                uint256 rewardfee = rewardBNB.mul(bnbClaimTax.layer5).div(100);
                 (bool success, ) = address(reservewallet).call{
                     value: rewardfee
                 }("");
@@ -2232,7 +1860,7 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
 
                 rewardBNB = rewardBNB.sub(rewardfee);
             } else {
-                uint256 rewardfee = rewardBNB.mul(layer6tax).div(100);
+                uint256 rewardfee = rewardBNB.mul(bnbClaimTax.layer6).div(100);
                 (bool success, ) = address(reservewallet).call{
                     value: rewardfee
                 }("");
@@ -2249,19 +1877,7 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
 
             // update claimed rewards
             userClaimedBNB[msg.sender] += rewardBNB;
-            totalClaimedBNB = totalClaimedBNB.add(rewardBNB);
-        }
-
-        uint256 userbalance = balanceOf(msg.sender);
-
-        // free gas fee
-        if (userbalance >= mintoken && userbalance <= maxtoken) {
-            // BNB CLAIM
-            (bool fee, ) = address(msg.sender).call{value: claimgasfee}("");
-            require(fee, "Error: Cannot send fee");
-
-            totalgasfeesdistributed = totalgasfeesdistributed.add(claimgasfee);
-            userrecievedgasfees[msg.sender] += claimgasfee;
+            totalClaimedBNB += rewardBNB;
         }
 
         // update rewardCycleBlock
@@ -2275,31 +1891,16 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
         );
     }
 
-    // function calculateapproxReinvestToken(address _user, uint256 perc) public view returns (uint256 _approxtokens) {
-
-    //     uint256 reward = calculateBNBReward(_user);
-
-    //     uint256 rewardBNB = reward.mul(perc).div(100);
-
-    //     uint256 rewardreinvest = reward.sub(rewardBNB);
-
-    //     if (rewardreinvest > 0) {
-    //     uint256 expectedtoken = Utils.getAmountsout(rewardreinvest,address(pancakeRouter));
-
-    //     return expectedtoken;
-    //     }
-    //     else{
-    //         return 0;
-    //     }
-    // }
-
     function topUpClaimCycleAfterTransfer(address _add, uint256 amount)
         private
     {
         uint256 currentRecipientBalance = balanceOf(_add);
         uint256 basedRewardCycleBlock = getRewardCycleBlock();
 
-        if (_add == owner() && nextAvailableClaimDate[_add] == 0) {
+        if (
+            (_add == owner() && nextAvailableClaimDate[_add] == 0) ||
+            currentRecipientBalance == 0
+        ) {
             nextAvailableClaimDate[_add] =
                 block.timestamp +
                 basedRewardCycleBlock;
@@ -2361,125 +1962,133 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
         return true;
     }
 
-    function swapAndLiquify(
-        address from,
-        address to,
-        uint256 amount
-    ) private {
-        // is the token balance of this contract address over the min number of
-        // tokens that we need to initiate a swap + liquidity lock?
-        // also, don't get caught in a circular liquidity event.
-        // also, don't swap & liquify if sender is pancake pair.
+    function swapAndLiquify(address from, address to) private lockTheSwap {
         uint256 contractTokenBalance = balanceOf(address(this));
-
-        if (contractTokenBalance >= _maxTxAmount) {
-            contractTokenBalance = _maxTxAmount;
-        }
-
-        bool shouldSell = contractTokenBalance >= minTokenNumberUpperlimit;
+        uint256 initialBalance = address(this).balance;
 
         if (
-            !inSwapAndLiquify &&
-            shouldSell &&
-            from != pancakePair &&
+            contractTokenBalance >= minTokenNumberUpperlimit &&
+            initialBalance <= rewardHardcap &&
             swapAndLiquifyEnabled &&
-            !(from == address(this) && to == address(pancakePair)) // swap 1 time
+            from != pancakePair &&
+            !(from == address(this) && to == address(pancakePair))
         ) {
-            // only sell for minTokenNumberToSell, decouple from _maxTxAmount
-            contractTokenBalance = minTokenNumberToSell;
-
-            uint256 otherPiece = contractTokenBalance.mul(1250).div(10000); //  12.5
-            uint256 pooledBNB = contractTokenBalance.sub(otherPiece);
-
-            uint256 initialBalance = address(this).balance;
-
-            // now is to lock into staking pool
-            Utils.swapTokensForEth(address(pancakeRouter), pooledBNB);
-
-            // how much BNB did we just swap into?
-
-            // capture the contract's current BNB balance.
-            // this is so that we can capture exactly the amount of BNB that the
-            // swap creates, and not make the liquidity event include any BNB that
-            // has been manually sent to the contract
+            Utils.swapTokensForEth(
+                address(pancakeRouter),
+                minTokenNumberToSell
+            );
             uint256 deltaBalance = address(this).balance.sub(initialBalance);
 
-            uint256 bnbToBeAddedToLiquidity = deltaBalance.mul(1429).div(10000); // 14.29
+            if (tokenomics.marketing > 0) {
+                // send marketing rewards
+                (bool sent, ) = payable(address(marketingwallet)).call{
+                    value: deltaBalance.mul(tokenomics.marketing).div(
+                        _Tokenomics
+                    )
+                }("");
+                require(sent, "Error: Cannot send reward");
+            }
 
-            uint256 marketingreward = deltaBalance.mul(marketingshare).div(
-                10000
-            ); // 10.71
+            if (tokenomics.reserve > 0) {
+                // send resere rewards
+                (bool succ, ) = payable(address(reservewallet)).call{
+                    value: deltaBalance.mul(tokenomics.reserve).div(_Tokenomics)
+                }("");
+                require(succ, "Error: Cannot send reward");
+            }
 
-            // uint256 buybackreward = deltaBalance.mul(buybackshare).div(10000); // 14.29
-
-            uint256 teamreward = deltaBalance.mul(teamshare).div(10000); // 3.57
-
-            // IWBNB(0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd).deposit{
-            //     value: buybackreward
-            // }();
-
-            // send makreting rewards
-            (bool sent, ) = address(marketingwallet).call{
-                value: marketingreward
-            }("");
-            require(sent, "Error: Cannot send reward");
-
-            // send team rewards
-            (bool succ, ) = address(teamwallet).call{value: teamreward}("");
-            require(succ, "Error: Cannot send reward");
-
-            // add liquidity to pancake
-            Utils.addLiquidity(
-                address(pancakeRouter),
-                owner(),
-                otherPiece,
-                bnbToBeAddedToLiquidity
-            );
-
-            emit SwapAndLiquify(otherPiece, deltaBalance, otherPiece);
-
-            if (to == address(pancakePair)) {
-                uint256 balance = IWBNB(
-                    0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd
-                ).balanceOf(address(this));
-                if (
-                    buyBackEnabled &&
-                    balance > uint256(1 * 10**18) &&
-                    amount > buyBackthresholdLimit
-                ) {
-                    if (balance > buyBackUpperLimit) {
-                        balance = buyBackUpperLimit;
-                    }
-
-                    uint256 buybackamount = balance.div(100);
-
-                    Utils.swapTokensForTokens(
-                        address(pancakeRouter),
-                        deadAddress,
-                        buybackamount
-                    );
-                }
+            if (tokenomics.liquidity > 0) {
+                // add liquidity to pancake
+                uint256 liquidityToken = minTokenNumberToSell
+                    .mul(tokenomics.liquidity)
+                    .div(_Tokenomics);
+                Utils.addLiquidity(
+                    address(pancakeRouter),
+                    owner(),
+                    liquidityToken,
+                    deltaBalance.mul(tokenomics.liquidity).div(_Tokenomics)
+                );
+                emit SwapAndLiquify(
+                    liquidityToken,
+                    deltaBalance,
+                    liquidityToken
+                );
             }
         }
     }
 
-    //   function activateTestNet() public onlyOwner {
-    //     // reward claim
-    //     disableEasyRewardFrom = block.timestamp;
-    //     rewardCycleBlock = 3 minutes;
-    //     easyRewardCycleBlock = 3 minutes;
+    function triggerSwapAndLiquify() public lockTheSwap {
+        require(
+            _msgSender() == address(triggerwallet) && swapAndLiquifyEnabled,
+            "Wrong caller or swapAndLiquify not enabled"
+        );
 
-    //     // protocol
-    //     disruptiveCoverageFee = 1 ether;
-    //     disruptiveTransferEnabledFrom = block.timestamp;
-    //     setMaxTxPercent(10000);                   // 100 means 1%   and 1 means 0.01%
-    //     setSwapAndLiquifyEnabled(true);
-    //     buyBackEnabled = true;
+        uint256 initialBalance = address(this).balance;
 
-    //     // approve contract
-    //     _approve(address(this), address(pancakeRouter), 2 ** 256 - 1);
-    //      IWBNB(0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd).approve(address(pancakeRouter),2 ** 256 - 1);
-    // }
+        //check triggerwallet balance
+        if (
+            address(triggerwallet).balance < 0.1 ether &&
+            initialBalance > 0.1 ether
+        ) {
+            (bool sent, ) = payable(address(triggerwallet)).call{
+                value: 0.1 ether
+            }("");
+            require(sent, "Error: Cannot send gas fee");
+            initialBalance = address(this).balance;
+        }
+
+        Utils.swapTokensForEth(address(pancakeRouter), minTokenNumberToSell);
+        uint256 deltaBalance = address(this).balance.sub(initialBalance);
+
+        if (tokenomics.marketing > 0) {
+            // send marketing rewards
+            (bool sentm, ) = payable(address(marketingwallet)).call{
+                value: deltaBalance.mul(tokenomics.marketing).div(_Tokenomics)
+            }("");
+            require(sentm, "Error: Cannot send reward");
+        }
+
+        if (tokenomics.reserve > 0) {
+            // send resere rewards
+            (bool sentr, ) = payable(address(reservewallet)).call{
+                value: deltaBalance.mul(tokenomics.reserve).div(_Tokenomics)
+            }("");
+            require(sentr, "Error: Cannot send reward");
+        }
+
+        if (tokenomics.liquidity > 0) {
+            // add liquidity to pancake
+            uint256 liquidityToken = minTokenNumberToSell
+                .mul(tokenomics.liquidity)
+                .div(_Tokenomics);
+            Utils.addLiquidity(
+                address(pancakeRouter),
+                owner(),
+                liquidityToken,
+                deltaBalance.mul(tokenomics.liquidity).div(_Tokenomics)
+            );
+            emit SwapAndLiquify(liquidityToken, deltaBalance, liquidityToken);
+        }
+    }
+
+    /*
+    function activateTestNet() public onlyOwner {
+         // reward claim
+         disableEasyRewardFrom = block.timestamp;
+         rewardCycleBlock = 1 minutes;
+         easyRewardCycleBlock = 1 minutes;
+
+         // protocol
+         disruptiveCoverageFee = 1 ether;
+         disruptiveTransferEnabledFrom = block.timestamp;
+         setMaxTxPercent(10000);                   // 100 means 1%   and 1 means 0.01%
+         setSwapAndLiquifyEnabled(true);
+
+         // approve contract
+         _approve(address(this), address(pancakeRouter), 2 ** 256 - 1);
+          IWBNB(payable(address(0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd))).approve(address(pancakeRouter),2 ** 256 - 1);
+    }
+    */
 
     function activateContract() public onlyOwner {
         // reward claim
@@ -2492,14 +2101,11 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
         disruptiveTransferEnabledFrom = block.timestamp;
         setMaxTxPercent(10000);
         setSwapAndLiquifyEnabled(true);
-        buyBackEnabled = true;
 
         // approve contract
         _approve(address(this), address(pancakeRouter), 2**256 - 1);
-        IWBNB(0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd).approve(
-            address(pancakeRouter),
-            2**256 - 1
-        );
+        IWBNB(payable(address(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c)))
+            .approve(address(pancakeRouter), 2**256 - 1);
     }
 
     function changerewardCycleBlock(uint256 newcycle) public onlyOwner {
@@ -2517,10 +2123,6 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
         marketingwallet = _newaddress;
     }
 
-    function changeteamwallet(address payable _newaddress) public onlyOwner {
-        teamwallet = _newaddress;
-    }
-
     function changereinvestwallet(address payable _newaddress)
         public
         onlyOwner
@@ -2528,9 +2130,13 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
         reinvestwallet = _newaddress;
     }
 
+    function changetriggerwallet(address payable _newaddress) public onlyOwner {
+        triggerwallet = _newaddress;
+    }
+
     // disable enable reflection fee , value == false (enable)
     function reflectionfeestartstop(bool _value) public onlyOwner {
-        reflectionFeesdiabled = _value;
+        reflectionFeesDisabled = _value;
     }
 
     function migrateToken(address _newadress, uint256 _amount)
@@ -2543,10 +2149,8 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
     }
 
     function migrateWBnb(address _newadress, uint256 _amount) public onlyOwner {
-        IWBNB(0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd).transfer(
-            _newadress,
-            _amount
-        );
+        IWBNB(payable(address(0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c)))
+            .transfer(_newadress, _amount);
     }
 
     function migrateBnb(address payable _newadd, uint256 amount)
@@ -2560,20 +2164,43 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
         );
     }
 
-    function changethreshHoldTopUpRate(uint256 _newrate) public onlyOwner {
+    function changeThreshHoldTopUpRate(uint256 _newrate) public onlyOwner {
         threshHoldTopUpRate = _newrate;
     }
 
-    function changeselltax(uint256 _newtax) public onlyOwner {
-        selltax = _newtax;
+    function changeSelltax(uint256 _selltax) public onlyOwner {
+        selltax = _selltax;
     }
 
-    function changebuytax(uint256 _newtax) public onlyOwner {
-        buytax = _newtax;
+    function changeBuytax(uint256 _buytax) public onlyOwner {
+        buytax = _buytax;
     }
 
-    function changetransfertax(uint256 _newtax) public onlyOwner {
-        transfertax = _newtax;
+    function changeTransfertax(uint256 _transfertax) public onlyOwner {
+        transfertax = _transfertax;
+    }
+
+    function changeTokenomics(
+        uint256 bnbReward,
+        uint256 liquidity,
+        uint256 marketing,
+        uint256 reflection,
+        uint256 reserve
+    ) public onlyOwner {
+        require(
+            bnbReward.add(
+                liquidity.add(marketing.add(reflection.add(reserve)))
+            ) == 100,
+            "Have to be 100 in total"
+        );
+        tokenomics = Tokenomics(
+            bnbReward,
+            liquidity,
+            marketing,
+            reflection,
+            reserve
+        );
+        updateTokenomics();
     }
 
     function changebnbclaimtax(uint8 layer, uint256 _newfee) public onlyOwner {
@@ -2588,17 +2215,17 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
         );
 
         if (layer == 1) {
-            layer1tax = _newfee;
+            bnbClaimTax.layer1 = _newfee;
         } else if (layer == 2) {
-            layer2tax = _newfee;
+            bnbClaimTax.layer2 = _newfee;
         } else if (layer == 3) {
-            layer3tax = _newfee;
+            bnbClaimTax.layer3 = _newfee;
         } else if (layer == 4) {
-            layer4tax = _newfee;
+            bnbClaimTax.layer4 = _newfee;
         } else if (layer == 5) {
-            layer5tax = _newfee;
+            bnbClaimTax.layer5 = _newfee;
         } else if (layer == 6) {
-            layer6tax = _newfee;
+            bnbClaimTax.layer6 = _newfee;
         }
     }
 
@@ -2614,22 +2241,18 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
         );
 
         if (layer == 1) {
-            tax1 = _newfee;
+            reinvestTax.layer1 = _newfee;
         } else if (layer == 2) {
-            tax2 = _newfee;
+            reinvestTax.layer2 = _newfee;
         } else if (layer == 3) {
-            tax3 = _newfee;
+            reinvestTax.layer3 = _newfee;
         } else if (layer == 4) {
-            tax4 = _newfee;
+            reinvestTax.layer4 = _newfee;
         } else if (layer == 5) {
-            tax5 = _newfee;
+            reinvestTax.layer5 = _newfee;
         } else if (layer == 6) {
-            tax6 = _newfee;
+            reinvestTax.layer6 = _newfee;
         }
-    }
-
-    function changeclaimgasfee(uint256 _newfee) public onlyOwner {
-        claimgasfee = _newfee;
     }
 
     function changeminTokenNumberToSell(uint256 _newvalue) public onlyOwner {
@@ -2649,37 +2272,41 @@ contract HODLV3 is Context, IBEP20, Ownable, ReentrancyGuard {
         rewardHardcap = _newvalue;
     }
 
-    // 1250 => 12.5 %
-    function changemarketingshare(uint256 _newvalue) public onlyOwner {
-        marketingshare = _newvalue;
+    function updateTokenomics() private {
+        _Reflection = tokenomics.reflection;
+        _Tokenomics = tokenomics
+            .bnbReward
+            .add(tokenomics.marketing)
+            .add(tokenomics.liquidity)
+            .add(tokenomics.reserve);
     }
 
-    // 1250 => 12.5 %
-    function changebuybackshare(uint256 _newvalue) public onlyOwner {
-        buybackshare = _newvalue;
+    function updatePairAddress(address _pairAddress, bool _enable)
+        public
+        onlyOwner
+    {
+        require(
+            pairAddresses[_pairAddress] != _enable,
+            "Will have no effect.."
+        );
+        pairAddresses[_pairAddress] = _enable;
     }
 
-    function changeteamshare(uint256 _newvalue) public onlyOwner {
-        teamshare = _newvalue;
-    }
-
-    function changebuyBackUpperLimit(uint256 _newvalue) public onlyOwner {
-        buyBackUpperLimit = _newvalue;
-    }
-
-    function changebuyBackthresholdLimit(uint256 _newvalue) public onlyOwner {
-        buyBackthresholdLimit = _newvalue;
-    }
-
-    function changemintoken(uint256 _newvalue) public onlyOwner {
-        mintoken = _newvalue;
-    }
-
-    function changemaxtoken(uint256 _newvalue) public onlyOwner {
-        maxtoken = _newvalue;
-    }
-
-    function setBuyBackEnabled(bool _enabled) public onlyOwner {
-        buyBackEnabled = _enabled;
+    function initializeUpgradedContract(address _triggerWallet)
+        public
+        onlyOwner
+    {
+        bnbClaimTax = LayerTax(10, 10, 10, 10, 10, 20);
+        reinvestTax = LayerTax(10, 10, 10, 10, 10, 20);
+        tokenomics = Tokenomics(60, 20, 10, 10, 0);
+        selltax = 100;
+        buytax = 100;
+        transfertax = 100;
+        updateTokenomics();
+        triggerwallet = _triggerWallet;
+        //init pairAddresses
+        pairAddresses[pancakePair] = true;
+        pairAddresses[0xa3cF95FdA825399Bb71C6C26969266fcEB79e48B] = true; //BabySwap
+        pairAddresses[0x0bd7F4AEBed7b748E4743A8C544B7C5450dD7EBa] = true; //HODL X
     }
 }
